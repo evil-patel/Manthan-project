@@ -1,54 +1,68 @@
-import axios from 'axios';
-import React, { useRef } from 'react';
-import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { API_URL } from '../../Config';
-import { changeprofilepic, loginuserMain } from '../../slices/Userslice';
+import axios from "axios";
+import React, { useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { API_URL } from "../../Config";
+import { changeprofilepic } from "../../slices/Userslice";
 
 export default function Profileimage() {
     const imageref = useRef();
-    const email = useSelector((store) => store.user.userdata.email)
-    const imgurl = useSelector((store)=>store.user.userdata.profilepic)
-    const [message, setmessage] = useState('')
-    let iref = useRef()
-    let dispatch = useDispatch()
+    const email = useSelector((store) => store.user.userdata.email);
+    const imgurl = useSelector((store) => store.user.userdata.profilepic);
+    const [message, setmessage] = useState("");
+    const iref = useRef();
+    const dispatch = useDispatch();
+
     const fun1 = async () => {
         let data = { email: email, userimg: imageref.current.files[0] };
 
-        await axios.post(API_URL + "/user/setimage", data, { headers: { "Content-Type": "multipart/form-data" } })
+        await axios
+            .post(API_URL + "/user/setimage", data, { headers: { "Content-Type": "multipart/form-data" } })
             .then((d) => {
-                setmessage("Image Saved")
-                console.log(d)
-                  dispatch(changeprofilepic(d.data.data.profilepic))
-                iref.current.src =API_URL+""+d.data.data.profilepic
-                console.log(API_URL+""+ d.data.data.profilepic)
+                setmessage("Image Saved");
+                dispatch(changeprofilepic(d.data.data.profilepic));
+                iref.current.src = API_URL + "" + d.data.data.profilepic;
             })
             .catch((err) => {
-                console.log(err)
-                setmessage("Something went wrong")
-            })
-    }
+                console.log(err);
+                setmessage("Something went wrong");
+            });
+    };
+
     return (
-        <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-            <div className="bg-white p-6 rounded-2xl shadow-md w-full max-w-md">
-                <img src={API_URL+imgurl} ref={iref}></img>
-                <label className="block text-lg font-semibold text-gray-800 mb-3">
-                    🖼️ Profile Image
-                </label>
+        <div className="min-h-screen flex items-center justify-center px-4 py-8">
+            <div className="w-full max-w-lvh bg-cyan-900/30 backdrop-blur-xl border border-cyan-400/40 rounded-3xl shadow-2xl p-8 flex flex-col items-center">
+                <h2 className="text-3xl font-extrabold bg-gradient-to-r from-cyan-300 to-teal-300 bg-clip-text text-transparent mb-6">
+                    Profile Image
+                </h2>
+
+                {/* Image Preview */}
+                <div className="w-32 h-32 mb-6 rounded-full overflow-hidden shadow-xl border-4 border-cyan-400">
+                    <img
+                        ref={iref}
+                        src={API_URL + imgurl}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                    />
+                </div>
+
+                {/* File Input */}
                 <input
                     type="file"
                     ref={imageref}
-                    className="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-700 bg-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition"
+                    className="w-full mb-5 border border-cyan-400/50 rounded-2xl px-4 py-3 text-gray-100 bg-cyan-800/40 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-cyan-600 file:text-white hover:file:bg-cyan-700 transition"
                 />
+
+                {/* Update Button */}
                 <button
-                    onClick={() => fun1()}
-                    className="bg-blue-600 w-full hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-xl mt-2 transition duration-300"
+                    onClick={fun1}
+                    className="w-full bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-teal-400 hover:to-cyan-400 text-white font-bold py-3 px-6 rounded-2xl shadow-lg transition duration-300"
                 >
                     Update
                 </button>
 
+                {/* Message */}
                 {message && (
-                    <div className="text-center text-green-600 font-semibold mt-2">
+                    <div className="text-center mt-4 text-cyan-200 font-semibold">
                         {message}
                     </div>
                 )}

@@ -29,9 +29,8 @@ import Showuserprofile from './components/learning/Showuserprofile'
 import VerifyOTP from './components/learning/VerifyOTP'
 //"quill/dist/quill.core.css"
 function App() {
-  let username = "";
-
-  let userislogin = useSelector((store) => store.user.userislogin)
+  // let username = "";
+  // let userislogin = useSelector((store) => store.user.userislogin)
 
   return (
 

@@ -6,7 +6,8 @@ export default function CategorySection({ onCategoryClick }) {
     const [categories, setCategories] = useState([]);
 
     useEffect(() => {
-        axios.get(`${API_URL}/userquestion/distinct-categories`)
+        axios
+            .get(`${API_URL}/userquestion/distinct-categories`)
             .then((res) => {
                 setCategories(res.data.data); // array of { _id, count }
             })
@@ -16,16 +17,24 @@ export default function CategorySection({ onCategoryClick }) {
     }, []);
 
     return (
-        <div className="bg-white shadow-md rounded-lg p-4 w-full">
-            <h2 className="text-xl font-bold mb-3 border-b pb-2">All Categories</h2>
-            <ul className="space-y-2">
+        <div className="w-full">
+            <ul className="flex flex-col gap-3">
                 {categories.map((cat, index) => (
                     <li
                         key={index}
-                        className="text-blue-600 hover:underline cursor-pointer uppercase"
-                        onClick={() => onCategoryClick(cat._id)} // pass the category name
+                        onClick={() => onCategoryClick(cat._id)}
+                        className="flex justify-between items-center p-3
+                                   bg-white/5 backdrop-blur-md rounded-xl
+                                   border border-cyan-400/20 
+                                   hover:border-cyan-400/70 hover:scale-[0.95]
+                                   cursor-pointer transition-all duration-300"
                     >
-                        {cat._id} ({cat.count})  {/* show count */}
+                        <span className="font-medium text-cyan-300 uppercase tracking-wide">
+                            {cat._id}
+                        </span>
+                        <span className="text-sm bg-cyan-400/20 text-cyan-200 px-3 py-1 rounded-full">
+                            {cat.count}
+                        </span>
                     </li>
                 ))}
             </ul>

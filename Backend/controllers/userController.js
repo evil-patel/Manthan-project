@@ -80,7 +80,7 @@ exports.Inseruser = async (o) => {
         await sendVerificationEmail(saved.email, saved.id, saved.otp)
             .then(() => {
                 data.msg = "record saved and email send for verifaction."
-                data.id = saved._id; 
+                data.id = saved._id;
             })
             .catch((err) => {
                 data = err

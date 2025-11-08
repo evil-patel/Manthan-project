@@ -1,7 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import Editor from './Editor';
 import Quill from 'quill';
-import './forrte.css';
 import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
 import { API_URL } from '../../Config';
@@ -17,7 +16,7 @@ export default function AskQuestions() {
     const quillRef = useRef();
     const titleref = useRef("");
     const categoryref = useRef();
-    const [msg, setmsg] = useState(true);
+    const [msg, setmsg] = useState(false);
     const user_id = useSelector((store) => store.user.userdata._id);
     const dispatch = useDispatch();
     const [currentEditId, setCurrentEditId] = useState('');
@@ -43,10 +42,11 @@ export default function AskQuestions() {
 
         await axios.post(API_URL + "/userquestion", data)
             .then((d) => {
-                setmsg("Question Asked to users.");
-                setTimeout(() => setmsg(false), 5000)
+                setmsg("✅ Question posted successfully!");
+                setTimeout(() => setmsg(false), 4000)
                 dispatch(addQuestion(d.data.data));
                 setQuestionList(prev => [d.data.data, ...prev]);
+                resetForm();
             })
             .catch((err) => {
                 console.log(err);
@@ -59,7 +59,6 @@ export default function AskQuestions() {
         const data = { question, category }
         await axios.put(`${API_URL}/userquestion/${id}`, data)
             .then((d) => {
-                console.log("Updated:", d.data);
                 setQuestionList((prev) =>
                     prev.map((q) => q._id === id ? { ...q, question, category } : q)
                 );
@@ -73,7 +72,6 @@ export default function AskQuestions() {
     const handleDelete = async (id) => {
         await axios.delete(`${API_URL}/userquestion/${id}`)
             .then((d) => {
-                console.log("Deleted:", d.data);
                 setQuestionList((s) => s.filter((i) => i._id !== id));
             })
             .catch((err) => {
@@ -93,24 +91,34 @@ export default function AskQuestions() {
         setCurrentEditId("");
         titleref.current.disabled = false;
         titleref.current.value = "";
-        quillRef.current.container.innerHTML = "";
+        // quillRef.current.container.innerHTML=""
+        quillRef.current.container.defaultValue=new Delta().insert('\n', { header: 1 }) ;
+        // quillRef.current.container.value=""
+        // quillRef.current.container.innerHTML=""
         categoryref.current.value = "";
     }
 
     return (
-        <>
-            <div>
-                <h1 className='font-bold text-2xl'>Question Title :- </h1>
+        <div className="max-w-6xl mx-auto p-6 sm:p-10 text-white">
+            {/* Ask Question Card */}
+            <div className="backdrop-blur-xl bg-transparent border border-white/20 shadow-2xl rounded-3xl p-6 sm:p-8">
+                <h1 className="font-extrabold text-3xl sm:text-4xl mb-6 text-center text-cyan-300">
+                    🚀 Ask a Question
+                </h1>
+
+                {/* Title */}
                 <input
                     type="text"
                     ref={titleref}
-                    className='border w-full my-3 p-2 rounded outline-none focus:ring-2 focus:ring-blue-400'
-                    placeholder="Enter your question title"
+                    className="w-full p-3 rounded-xl mb-5 text-base bg-black/40 text-white border border-white/30 focus:outline-none focus:ring-2 focus:ring-cyan-400 placeholder-gray-300"
+                    placeholder="Enter your question title..."
                 />
-            </div>
-            <div className='flex flex-col gap-2'>
-                <h1 className='font-medium text-xl'>Select Category :- </h1>
-                <select className="p-2 mb-3 w-fit border rounded" ref={categoryref}>
+
+                {/* Category */}
+                <select
+                    className="p-3 mb-5 w-full rounded-xl bg-black/40 border border-white/30 text-white focus:ring-2 focus:ring-cyan-400"
+                    ref={categoryref}
+                >
                     <option value="">Select Category</option>
                     <option value="general">General Discussion</option>
                     <option value="technology">Technology</option>
@@ -123,35 +131,38 @@ export default function AskQuestions() {
                     <option value="career">Career & Jobs</option>
                     <option value="feedback">Site Feedback</option>
                 </select>
-            </div>
 
-            <div>
-                <Editor
-                    ref={quillRef}
-                    readOnly={readOnly}
-                    defaultValue={new Delta()
-                        .insert('\n', { header: 1 })
-                    }
-                    onSelectionChange={setRange}
-                    onTextChange={setLastChange}
-                />
-
-                <div className='text-center content-center text-xl font-bold uppercase border mt-4 rounded-xl bg-green-500 text-white w-full mx-auto'>
-                    {msg}
+                {/* Editor */}
+                <div className="bg-black/40 border border-white/30 rounded-xl overflow-hidden">
+                    <Editor
+                        ref={quillRef}
+                        readOnly={readOnly}
+                        defaultValue={new Delta().insert('\n', { header: 1 })}
+                        onSelectionChange={setRange}
+                        onTextChange={setLastChange}
+                    />
                 </div>
 
-                <div className='flex mt-3 gap-5'>
+                {/* Message */}
+                {msg && (
+                    <div className="text-center mt-4 p-2 rounded-lg bg-green-500/20 text-green-300 font-medium">
+                        {msg}
+                    </div>
+                )}
+
+                {/* Buttons */}
+                <div className="flex flex-col sm:flex-row justify-center gap-4 mt-6">
                     {currentEditId ? (
                         <>
                             <button
                                 onClick={() => UpdateData(currentEditId)}
-                                className='mt-4 bg-emerald-500 text-white px-4 py-2 rounded'
+                                className="bg-cyan-600 hover:bg-cyan-700 text-white px-6 py-2 rounded-xl shadow-lg transition font-semibold"
                             >
                                 Update Question
                             </button>
                             <button
                                 onClick={resetForm}
-                                className='mt-4 bg-gray-500 text-white px-4 py-2 rounded'
+                                className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-xl shadow-lg transition font-semibold"
                             >
                                 Cancel
                             </button>
@@ -159,7 +170,7 @@ export default function AskQuestions() {
                     ) : (
                         <button
                             onClick={Showdata}
-                            className='mt-4 bg-blue-500 text-white px-4 py-2 rounded'
+                            className="bg-cyan-600 hover:bg-cyan-700 text-white px-6 py-2 rounded-xl shadow-lg transition font-semibold"
                         >
                             Submit Question
                         </button>
@@ -167,47 +178,41 @@ export default function AskQuestions() {
                 </div>
             </div>
 
-            <div className='mt-8'>
-                <h2 className='text-2xl font-bold mb-2'>Your Questions</h2>
-                {questionList.length > 0 ? (
-                    questionList.map((ques, index) => (
-                        <div
-                            className="flex flex-col sm:flex-row sm:justify-between sm:items-center w-full p-4 mb-3 bg-white shadow-md rounded-2xl hover:bg-gray-50 transition-all duration-200"
-                            key={index}
+            {/* Questions Grid */}
+            <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {questionList.length > 0 ? questionList.map((ques, index) => (
+                    <div
+                        key={index}
+                        className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl p-5 shadow-lg hover:shadow-2xl hover:scale-95 transition-all"
+                    >
+                        <Link
+                            to={`/Questions_details/${ques._id}`}
+                            className="block font-bold text-lg sm:text-xl text-cyan-300 hover:text-cyan-400 mb-2 break-words"
                         >
+                            ❓ {ques.questiontitle}
+                        </Link>
 
-                            <Link
-                                to={`/Questions_details/${ques._id}`} className="text-base sm:text-lg font-semibold text-gray-800 sm:w-2/5 text-wrap break-words mb-2 sm:mb-0 uppercase">
-                                ❓ {ques.questiontitle}
-                            </Link>
+                        <div className="text-sm text-gray-300 mb-3">🕒 {new Date(ques.postdate).toLocaleString()}</div>
 
-                            <div className="text-sm text-gray-500 sm:w-1/5 text-end">
-                                🕒 {new Date(ques.postdate).toLocaleString()}
-                            </div>
-
-                            <div className="sm:w-1/5 text-end mt-2 sm:mt-0">
-                                <button
-                                    onClick={() => handleEdit(ques)}
-                                    className="text-blue-600 hover:text-blue-800 font-medium"
-                                >
-                                    ✏️ Edit
-                                </button>
-                            </div>
-
-                            <div className="sm:w-1/5 text-end mt-2 sm:mt-0">
-                                <button
-                                    onClick={() => handleDelete(ques._id)}
-                                    className="text-red-600 hover:text-red-800 font-medium"
-                                >
-                                    🗑️ Delete
-                                </button>
-                            </div>
+                        <div className="flex justify-between">
+                            <button
+                                onClick={() => handleEdit(ques)}
+                                className="text-cyan-300 hover:text-cyan-400 font-medium"
+                            >
+                                ✏️ Edit
+                            </button>
+                            <button
+                                onClick={() => handleDelete(ques._id)}
+                                className="text-red-400 hover:text-red-500 font-medium"
+                            >
+                                🗑️ Delete
+                            </button>
                         </div>
-                    ))
-                ) : (
-                    <p>No questions yet.</p>
+                    </div>
+                )) : (
+                    <p className="col-span-full text-gray-400 text-center">No questions yet.</p>
                 )}
             </div>
-        </>
+        </div>
     );
 }

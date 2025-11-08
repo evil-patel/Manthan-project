@@ -5,219 +5,230 @@ import Profile from './Profile';
 import Profileimage from './Profileimage';
 import AskQuestions from './AskQuestions';
 import { Link } from 'react-router-dom';
+
 export default function Home() {
   const [selectedMenu, setSelectedMenu] = useState('home');
   const userislogin = useSelector((store) => store.user.userislogin);
   const username = useSelector((store) => store.user.userdata.name);
+
+  // Generate random particles
+  const particles = Array.from({ length: 30 }, (_, i) => ({
+    id: i,
+    style: {
+      top: `${Math.random() * 100}%`,
+      left: `${Math.random() * 100}%`,
+      width: `${Math.random() * 6 + 4}px`,
+      height: `${Math.random() * 6 + 4}px`,
+      animationDelay: `${Math.random() * 10}s`,
+      background: `rgba(0,200,255,0.4)`,
+    },
+  }));
+
+  // ----------------- NOT LOGGED IN -----------------
   if (!userislogin) {
     return (
-      <div className="relative min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 px-8 py-12 overflow-hidden">
+      <div className="relative min-h-screen pt-20 flex flex-col bg-black text-white overflow-hidden font-sans">
+        {/* Background Animations */}
+        <style>
+          {`
+            @keyframes particleMove {
+              0% { transform: translate(0,0); opacity: 0.5; }
+              50% { transform: translate(20px,-30px); opacity: 0.3; }
+              100% { transform: translate(0,0); opacity: 0.5; }
+            }
+            .particle {
+              position: absolute;
+              border-radius: 50%;
+              animation: particleMove 10s ease-in-out infinite;
+              pointer-events: none;
+            }
+            @keyframes pulse-slow {
+              0%, 100% { transform: scale(1); opacity: 0.6; }
+              50% { transform: scale(1.3); opacity: 0.3; }
+            }
+            .animate-pulse-slow { animation: pulse-slow 15s ease-in-out infinite; }
+          `}
+        </style>
 
-        {/* Floating decorative shapes */}
-        <div className="absolute top-[-50px] left-[-50px] w-40 h-40 bg-blue-300 rounded-full opacity-30 animate-pulse-slow"></div>
-        <div className="absolute bottom-[-60px] right-[-40px] w-72 h-72 bg-indigo-300 rounded-full opacity-20 animate-pulse-slower"></div>
-        <div className="absolute top-1/2 left-[-80px] w-60 h-60 bg-teal-300 rounded-full opacity-25 animate-spin-slow"></div>
+        {/* Particles */}
+        {particles.map((p) => (
+          <div key={p.id} className="particle" style={p.style}></div>
+        ))}
 
-        <div className="relative max-w-7xl mx-auto z-10 text-center">
-
-          {/* Welcome Header */}
-          <div className="mb-16">
-            <h1 className="text-5xl md:text-6xl font-extrabold text-gray-900 mb-4 animate-pulse">
-              Welcome to Our Platform! 👋
-            </h1>
-            <p className="text-gray-700 text-lg md:text-xl">
-              Sign up to create an account and log in to unlock your personalized dashboard.
-            </p>
-          </div>
-
-          {/* Feature Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 mb-16">
-            <div className="bg-white rounded-3xl shadow-xl p-8 hover:shadow-2xl transform hover:-translate-y-3 transition-all duration-500 border-t-4 border-gradient-to-r from-blue-500 via-teal-500 to-indigo-500">
-              <div className="text-5xl mb-4 text-blue-500">✨</div>
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Explore</h2>
-              <p className="text-gray-600 text-sm">
-                Discover what our platform has to offer and learn more about its features.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-3xl shadow-xl p-8 hover:shadow-2xl transform hover:-translate-y-3 transition-all duration-500 border-t-4 border-gradient-to-r from-teal-400 via-cyan-400 to-blue-400">
-              <div className="text-5xl mb-4 text-teal-500">🌟</div>
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Connect</h2>
-              <p className="text-gray-600 text-sm">
-                Join our community, ask questions, and engage with other users.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-3xl shadow-xl p-8 hover:shadow-2xl transform hover:-translate-y-3 transition-all duration-500 border-t-4 border-gradient-to-r from-indigo-400 via-blue-400 to-teal-400">
-              <div className="text-5xl mb-4 text-indigo-500">💡</div>
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Learn</h2>
-              <p className="text-gray-600 text-sm">
-                Browse tutorials, guides, and tips to enhance your skills.
-              </p>
-            </div>
-          </div>
-
-          {/* Separate Register & Login Buttons */}
-          <div className="flex flex-col sm:flex-row justify-center gap-6">
-            <a
-              href="/registration"
-              className="inline-block bg-white text-blue-600 font-semibold px-8 py-4 rounded-2xl shadow-lg hover:bg-gray-100 transition transform hover:-translate-y-1"
-            >
-              Register
-            </a>
-            <a
-              href="/login"
-              className="inline-block bg-blue-600 text-white font-semibold px-8 py-4 rounded-2xl shadow-lg hover:bg-blue-500 transition transform hover:-translate-y-1"
-            >
-              Login
-            </a>
-          </div>
-
+        {/* Glowing background shapes */}
+        <div className="absolute top-0 left-0 w-full h-full -z-10">
+          <div className="animate-pulse-slow absolute w-72 h-72 bg-blue-500/20 rounded-full -top-20 -left-20 blur-3xl"></div>
+          <div className="animate-pulse-slow absolute w-72 h-72 bg-cyan-400/20 rounded-full -bottom-20 -right-10 blur-3xl"></div>
+          <div className="animate-pulse-slow absolute w-56 h-56 bg-purple-400/20 rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
         </div>
+
+        {/* Hero */}
+        <section className="flex-1 flex flex-col justify-center items-center text-center px-6 py-24 relative z-10">
+          <h2 className="text-5xl font-extrabold mb-4 bg-gradient-to-r from-cyan-300 to-blue-400 bg-clip-text text-transparent drop-shadow-lg">
+            Join the Conversation 💬
+          </h2>
+          <p className="text-lg max-w-2xl mx-auto mb-8 text-gray-300">
+            Ask questions, share knowledge, and connect with a community that grows together.
+          </p>
+          <div className="flex gap-4 justify-center">
+            <Link
+              to="/registration"
+              className="px-6 py-3 bg-gradient-to-r from-cyan-400 to-blue-500 text-black rounded-xl font-semibold shadow hover:scale-105 transform transition"
+            >
+              Get Started
+            </Link>
+            <Link
+              to="/login"
+              className="px-6 py-3 bg-blue-800 text-white rounded-xl font-semibold shadow hover:bg-blue-900 transition"
+            >
+              Sign In
+            </Link>
+          </div>
+        </section>
       </div>
     );
   }
 
-
-
+  // ----------------- LOGGED IN -----------------
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="relative flex min-h-screen mt-12 bg-black text-white overflow-hidden font-sans">
+      {/* Background Animations */}
+      <style>
+        {`
+          @keyframes particleMove {
+            0% { transform: translate(0,0); opacity: 0.5; }
+            50% { transform: translate(20px,-30px); opacity: 0.3; }
+            100% { transform: translate(0,0); opacity: 0.5; }
+          }
+          .particle {
+            position: absolute;
+            border-radius: 50%;
+            animation: particleMove 10s ease-in-out infinite;
+            pointer-events: none;
+          }
+          @keyframes pulse-slow {
+            0%, 100% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.3); opacity: 0.3; }
+          }
+          .animate-pulse-slow { animation: pulse-slow 15s ease-in-out infinite; }
+        `}
+      </style>
+
+      {/* Particles */}
+      {particles.map((p) => (
+        <div key={p.id} className="particle" style={p.style}></div>
+      ))}
+
+      {/* Glowing background shapes */}
+      <div className="absolute top-0 left-0 w-full h-full -z-10">
+        <div className="animate-pulse-slow absolute w-72 h-72 bg-blue-500/20 rounded-full -top-20 -left-20 blur-3xl"></div>
+        <div className="animate-pulse-slow absolute w-72 h-72 bg-cyan-400/20 rounded-full -bottom-20 -right-10 blur-3xl"></div>
+        <div className="animate-pulse-slow absolute w-56 h-56 bg-purple-400/20 rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
+      </div>
+
       {/* Sidebar */}
-      <nav className="w-64 bg-gray-800 text-white p-6 space-y-4">
-        <h2 className="text-2xl font-bold mb-6">User Menu</h2>
-        <button
-          onClick={() => setSelectedMenu('home')}
-          className={`block w-full text-left px-4 py-2 rounded hover:bg-gray-700 ${selectedMenu === 'home' ? 'bg-gray-700' : ''
-            }`}
-        >
-          Home
-        </button>
-        <button
-          onClick={() => setSelectedMenu('question')}
-          className={`block w-full text-left px-4 py-2 rounded hover:bg-gray-700 ${selectedMenu === 'question' ? 'bg-gray-700' : ''
-            }`}
-        >
-          Ask Questions
-        </button>
-        <button
-          onClick={() => setSelectedMenu('changePassword')}
-          className={`block w-full text-left px-4 py-2 rounded hover:bg-gray-700 ${selectedMenu === 'changePassword' ? 'bg-gray-700' : ''
-            }`}
-        >
-          Change Password
-        </button>
-        <button
-          onClick={() => setSelectedMenu('profile')}
-          className={`block w-full text-left px-4 py-2 rounded hover:bg-gray-700 ${selectedMenu === 'profile' ? 'bg-gray-700' : ''
-            }`}
-        >
-          Profile
-        </button>
-        <button
-          onClick={() => setSelectedMenu('profile Image')}
-          className={`block w-full text-left px-4 py-2 rounded hover:bg-gray-700 ${selectedMenu === 'profile Image' ? 'bg-gray-700' : ''
-            }`}
-        >
-          Profile Image
-        </button>
-      </nav>
+      <aside className="w-64 bg-black/60 backdrop-blur-lg border-r border-cyan-400/30 shadow-lg p-6 sticky top-0 h-screen z-10">
+        <h2 className="text-xl font-bold mb-6 text-cyan-300">Forum Menu</h2>
+        <div className="space-y-2">
+          {['home', 'question', 'changePassword', 'profile', 'profile Image'].map((menu) => (
+            <button
+              key={menu}
+              onClick={() => setSelectedMenu(menu)}
+              className={`w-full text-left px-4 py-2 rounded-lg font-medium transition ${
+                selectedMenu === menu
+                  ? 'bg-gradient-to-r from-cyan-400 to-blue-500 text-black shadow-md'
+                  : 'text-gray-300 hover:bg-gray-800/60'
+              }`}
+            >
+              {menu === 'home'
+                ? 'Home'
+                : menu === 'question'
+                ? 'Ask Questions'
+                : menu === 'changePassword'
+                ? 'Change Password'
+                : menu === 'profile'
+                ? 'Profile'
+                : 'Profile Image'}
+            </button>
+          ))}
+        </div>
+      </aside>
 
-      <div className="flex-1 p-10">
-        {/* {selectedMenu === 'home' && (
-          <div className="bg-white p-6 shadow-2xl rounded-lg text-left">
-            <h2 className="text-xl font-semibold mb-2">Hello, {username} 👋</h2>
-            <p className="text-gray-700">Welcome to your dashboard.</p>
-          </div>
-        )} */}
-
+      {/* Main Content */}
+      <main className="flex-1 p-10 overflow-y-auto relative z-10">
         {selectedMenu === 'home' && (
-          <div className="relative min-h-screen bg-gradient-to-br from-blue-50 via-teal-50 to-indigo-50 px-8 py-12 overflow-hidden">
+          <div className="max-w-5xl mx-auto space-y-6">
+            {/* Search */}
+            <div className="mb-8">
+              <input
+                type="text"
+                placeholder="🔍 Search discussions..."
+                className="w-full px-4 py-3 rounded-xl border shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-400 bg-black/50 text-white placeholder-gray-400"
+              />
+            </div>
 
-            {/* Floating shapes */}
-            <div className="absolute top-[-50px] left-[-50px] w-40 h-40 bg-blue-300 rounded-full opacity-30 animate-pulse-slow"></div>
-            <div className="absolute bottom-[-60px] right-[-40px] w-72 h-72 bg-indigo-300 rounded-full opacity-20 animate-pulse-slower"></div>
-            <div className="absolute top-1/2 left-[-80px] w-60 h-60 bg-teal-300 rounded-full opacity-25 animate-spin-slow"></div>
+            {/* Welcome Banner */}
+            <div className="bg-gradient-to-r from-cyan-400 to-blue-500 text-black p-8 rounded-2xl shadow-lg">
+              <h1 className="text-3xl font-bold mb-2">Welcome back, {username} 👋</h1>
+              <p className="text-lg">Your personalized community dashboard is ready.</p>
+            </div>
 
-            <div className="relative max-w-7xl mx-auto z-10">
-
-              {/* Header */}
-              <div className="text-center mb-16">
-                <h1 className="text-5xl md:text-6xl font-extrabold text-gray-900 mb-4 animate-pulse">
-                  Welcome Back, <span className="text-blue-600">{username}</span>! 👋
-                </h1>
-                <p className="text-gray-700 text-lg md:text-xl">
-                  Your personal dashboard is ready. Let’s make today amazing!
-                </p>
-              </div>
-
-              {/* Feature Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-                <div className="bg-white rounded-3xl shadow-xl p-8 hover:shadow-2xl transform hover:-translate-y-3 transition-all duration-500 border-t-4 border-gradient-to-r from-blue-500 via-teal-500 to-indigo-500 animate-fadeIn">
-                  <div className="text-5xl mb-4 text-blue-500">✨</div>
-                  <h2 className="text-2xl font-semibold mb-3 text-gray-900">Inspiration</h2>
-                  <p className="text-gray-600 text-sm">
-                    Fresh ideas and motivation to fuel your creativity and focus.
-                  </p>
+            {/* Latest Threads */}
+            <div className="space-y-4">
+              <h2 className="text-xl font-bold text-cyan-300">Latest Discussions</h2>
+              {[
+                { title: '🔥 How to optimize React apps?', user: 'Alex', replies: 15, tag: 'React' },
+                { title: '🎨 Best UI design resources for beginners?', user: 'Priya', replies: 9, tag: 'UI/UX' },
+                { title: '📢 Forum Rules Update (Aug 2025)', user: 'Admin', replies: 0, tag: 'Announcement' },
+              ].map((thread, i) => (
+                <div
+                  key={i}
+                  className="bg-black/50 backdrop-blur-lg p-6 rounded-xl shadow hover:shadow-cyan-400/20 transition flex items-start justify-between border border-cyan-400/20"
+                >
+                  <div>
+                    <h3 className="font-semibold text-lg text-white">{thread.title}</h3>
+                    <p className="text-sm text-gray-400">
+                      Posted by <span className="font-medium text-cyan-300">{thread.user}</span> • {thread.replies} replies
+                    </p>
+                    <span className="inline-block mt-2 px-3 py-1 text-xs font-medium rounded-full bg-cyan-500/20 text-cyan-300">
+                      {thread.tag}
+                    </span>
+                  </div>
+                  <button className="text-gray-400 hover:text-cyan-300">💬 Reply</button>
                 </div>
-
-                <div className="bg-white rounded-3xl shadow-xl p-8 hover:shadow-2xl transform hover:-translate-y-3 transition-all duration-500 border-t-4 border-gradient-to-r from-teal-400 via-cyan-400 to-blue-400 animate-fadeIn delay-100">
-                  <div className="text-5xl mb-4 text-teal-500">🌟</div>
-                  <h2 className="text-2xl font-semibold mb-3 text-gray-900">Growth</h2>
-                  <p className="text-gray-600 text-sm">
-                    Track your achievements and see how far you’ve come each day.
-                  </p>
-                </div>
-
-                <div className="bg-white rounded-3xl shadow-xl p-8 hover:shadow-2xl transform hover:-translate-y-3 transition-all duration-500 border-t-4 border-gradient-to-r from-indigo-400 via-blue-400 to-teal-400 animate-fadeIn delay-200">
-                  <div className="text-5xl mb-4 text-indigo-500">💡</div>
-                  <h2 className="text-2xl font-semibold mb-3 text-gray-900">Wellbeing</h2>
-                  <p className="text-gray-600 text-sm">
-                    Stay energized and balanced. Remember to take mindful breaks.
-                  </p>
-                </div>
-              </div>
-
-              {/* Bottom Banner */}
-              <div className="mt-20 bg-gradient-to-r from-blue-500 via-teal-400 to-indigo-500 rounded-3xl shadow-2xl p-10 text-center text-white border-t-4 border-white animate-bounce">
-                <h2 className="text-3xl md:text-4xl font-bold mb-3">Keep Thriving 💪</h2>
-                <p className="text-lg md:text-xl">
-                  Every step counts. Keep your momentum, and enjoy the journey!
-                </p>
-              </div>
+              ))}
             </div>
           </div>
         )}
 
-
         {selectedMenu === 'question' && (
-          <div className="bg-white p-6 shadow-2xl rounded-lg text-left">
-            <h1 className="text-2xl text-center font-bold mb-4">Ask Question?</h1>
+          <div className="bg-transparent p-8 rounded-2xl shadow-lg border border-cyan-400/20">
+            <h1 className="text-2xl font-bold mb-6 text-cyan-300">Ask a Question ❓</h1>
             <AskQuestions />
           </div>
         )}
 
         {selectedMenu === 'changePassword' && (
-          <div>
-            <h2 className="text-2xl font-semibold text-gray-700 mb-6">Change Password</h2>
+          <div className="bg-transparent p-8 rounded-2xl shadow-lg border border-cyan-400/20">
+            <h2 className="text-2xl font-bold mb-6 text-cyan-300">Change Password 🔑</h2>
             <ChangePassword />
           </div>
         )}
 
         {selectedMenu === 'profile' && (
-          <div>
-            <h2 className="text-2xl font-semibold text-gray-700 mb-6">Create Profile</h2>
+          <div className="bg-transparent p-8 rounded-2xl shadow-lg border border-cyan-400/20">
+            <h2 className="text-2xl font-bold mb-6 text-cyan-300">Edit Profile 👤</h2>
             <Profile />
           </div>
         )}
 
         {selectedMenu === 'profile Image' && (
-          <div>
-            <h2 className="text-2xl font-semibold text-gray-700 mb-6">Profile Image</h2>
+          <div className="bg-transparent p-8 rounded-2xl shadow-lg border border-cyan-400/20">
+            <h2 className="text-2xl font-bold mb-6 text-cyan-300">Upload Profile Image 🖼️</h2>
             <Profileimage />
           </div>
         )}
-
-      </div>
+      </main>
     </div>
   );
 }
